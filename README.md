@@ -3,7 +3,7 @@
 ## Links and Contact
 
 github repo: https://github.com/abewd/E-commerce-Back-End
-video URL how to use: chrome-extension://mmeijimgabbpbgpdklnllpncmdofkcpn/app.html#/files/b5a18d6b-fa76-4a49-y1be-92ec7357c0a6
+video URL how to use: https://drive.google.com/file/d/1qu2tqT5_7uxmH4TEvzkoe3kqK6YgfhFG/view
 contact: hi@abewd.com
 
 ## Your Task
