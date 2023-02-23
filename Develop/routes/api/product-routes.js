@@ -74,6 +74,7 @@ router.post("/", (req, res) => {
     tagIds: req.body,
     tagIds,
   });
+  // NEED HELP WITH THIS ONE // // NEED HELP WITH THIS ONE // // NEED HELP WITH THIS ONE //
 
   Product.create(req.body)
     .then((product) => {
