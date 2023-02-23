@@ -80,12 +80,39 @@ router.post("/", (req, res) => {
     .then((product) => {
       // if there's product tags, we need to create pairings to bulk create in the ProductTag model
       if (req.body.tagIds.length) {
+        // map function is an array method, it is basically a built in method for JS
+        // it performs a loop, similar to a for loop
+        // More of conscice way of looking of things
+        //
+
+        // tagIds = [1, 2, 3, 4]
+
         const productTagIdArr = req.body.tagIds.map((tag_id) => {
           return {
             product_id: product.id,
             tag_id,
           };
         });
+        /*
+          productTagIdArr = [
+            {
+             product_id: 5,
+             tag_id: 1
+           },
+            {
+             product_id: 5,
+             tag_id: 2
+           },
+            {
+             product_id: 5,
+             tag_id: 3
+           },
+            {
+             product_id: 5,
+             tag_id: 4
+           }
+
+          */
         return ProductTag.bulkCreate(productTagIdArr);
       }
       // if no product tags, just respond
@@ -107,33 +134,31 @@ router.put("/:id", (req, res) => {
     },
   })
     .then((product) => {
-      // find all associated tags from ProductTag
-      return ProductTag.findAll({ where: { product_id: req.params.id } });
-    })
-    .then((productTags) => {
-      // get list of current tag_ids
-      const productTagIds = productTags.map(({ tag_id }) => tag_id);
-      // create filtered list of new tag_ids
-      const newProductTags = req.body.tagIds
-        .filter((tag_id) => !productTagIds.includes(tag_id))
-        .map((tag_id) => {
-          return {
-            product_id: req.params.id,
-            tag_id,
-          };
+      if (req.body.tagIds && req.body.tagIds.length) {
+        const productTags = ProductTag.findAll({
+          where: { product_id: req.params.id },
         });
-      // figure out which ones to remove
-      const productTagsToRemove = productTags
-        .filter(({ tag_id }) => !req.body.tagIds.includes(tag_id))
-        .map(({ id }) => id);
+        const productTagIds = productTags.map(({ tag_id }) => tag_id);
+        const newProductTags = req.body.tagIds
+          .filter((tag_id) => !productTagIds.includes(tag_id))
+          .map((tag_id) => {
+            return {
+              product_id: req.params.id,
+              tag_id,
+            };
+          });
+        const productTagsToRemove = productTags
+          .filter(({ tag_id }) => !req.body.tagIds.includes(tag_id))
+          .map(({ id }) => id);
 
-      // run both actions
-      return Promise.all([
-        ProductTag.destroy({ where: { id: productTagsToRemove } }),
-        ProductTag.bulkCreate(newProductTags),
-      ]);
+        return Promise.all([
+          ProductTag.destroy({ where: { id: productTagsToRemove } }),
+          ProductTag.bulkCreate(newProductTags),
+        ]);
+      }
+
+      return res.json(product);
     })
-    .then((updatedProductTags) => res.json(updatedProductTags))
     .catch((err) => {
       // console.log(err);
       res.status(400).json(err);
