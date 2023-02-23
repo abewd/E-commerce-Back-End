@@ -7,6 +7,7 @@ Category.init(
   {
     id: {
       // We want our ID to be an integer, cant be null, a primary key and allow auto increments
+
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true,
