@@ -66,14 +66,13 @@ router.post("/", (req, res) => {
     }
   */
   // Product details
-  Product.create({
-    product_name: req.body.product_name,
-    price: req.body.price,
-    stock: req.body.stock,
-    category_id: req.body.category_id,
-    tagIds: req.body,
-    tagIds,
-  });
+  // Product.create({
+  //   product_name: req.body.product_name,
+  //   price: req.body.price,
+  //   stock: req.body.stock,
+  //   category_id: req.body.category_id,
+  //   tagIds: req.body.tagIds,
+  // });
   // NEED HELP WITH THIS ONE // // NEED HELP WITH THIS ONE // // NEED HELP WITH THIS ONE //
 
   Product.create(req.body)
@@ -165,8 +164,19 @@ router.put("/:id", (req, res) => {
     });
 });
 
-router.delete("/:id", (req, res) => {
+router.delete("/:id", async (req, res) => {
   // delete one product by its `id` value
-});
 
-module.exports = router;
+  try {
+    const productData = await Product.destroy({
+      where: { id: req.params.id },
+    });
+    if (!productData) {
+      res.status(404).json({ message: "No category with this id!" });
+      return;
+    }
+    res.status(200).json(categoryData);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+});
